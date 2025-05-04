@@ -1,0 +1,48 @@
+import logging
+import sqlite3
+from aiogram import Bot, Dispatcher, types
+from aiogram.utils import executor
+
+TOKEN = "TU_TOKEN_DEL_BOT"
+bot = Bot(token=TOKEN)
+dp = Dispatcher(bot)
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+
+@dp.message_handler(commands=['bufete_info'])
+async def bufete_info(message: types.Message):
+    info_bufete = """
+    🏢 *Bufete DBV - Servicios Legales en Durango*
+
+    📍 *Dirección:* Real del Mezquital 102, Valle Verde, 34194 Durango, Dgo.
+    📞 *Teléfonos:*  
+       - +52 618 166 1155  
+       - +52 618 174 9241  
+    📧 *Correos:*  
+       - davidberumenveliz@gmail.com  
+       - bufetedbv@gmail.com  
+    🌐 *Sitio web:* [Servicios Legales en Durango](https://servicios-legales-en-durango.ueniweb.com)
+
+    🕘 *Horarios de Atención:*  
+       - Lunes a Viernes: 9:00 am - 6:00 pm  
+       - Sábado: 10:00 am - 2:00 pm  
+
+    ⚖️ *Servicios Legales Disponibles:*  
+       - Derecho Penal  
+       - Derecho Familiar  
+       - Derecho Laboral  
+       - Derecho Mercantil  
+    """
+    
+    # Botones interactivos para contactar o agendar consulta
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    markup.add(types.InlineKeyboardButton("📩 Enviar Email", url="mailto:davidberumenveliz@gmail.com"))
+    markup.add(types.InlineKeyboardButton("📞 Llamar", url="tel:+526181661155"))
+    markup.add(types.InlineKeyboardButton("📅 Agendar Consulta", callback_data="agendar_consulta"))
+
+    await message.reply(info_bufete, parse_mode="Markdown", reply_markup=markup)
+
+@dp.callback_query_handler(lambda c: c.data == "agendar_consulta")
+async def agendar_consulta(callback_query: types.CallbackQuery):
+    await callback_query.message.reply("📅 Para agendar una consulta, por favor envía un mensaje con tu nombre, número de contacto y el tipo de servicio legal que necesitas.")
